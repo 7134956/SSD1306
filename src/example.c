@@ -204,12 +204,12 @@ int main(int argc, char** argv) {
         ssd1306DrawString(4,  2, text_buffer, 1, WHITE, LAYER0); 
         ssd1306DrawRect(0, 0, 127, 13, INVERSE, LAYER0);
         ssd1306FillRect(2, 2, (int)(123 * m), 9, INVERSE, LAYER0);
-        
+
         /* CPU temperature  */
-        int t = GetCPUTemp() ;
-        snprintf ( text_buffer, sizeof(text_buffer), "CPU temp: %3d C", t );
+        int t = GetCPUTemp() / 100 ;
+        snprintf ( text_buffer, sizeof(text_buffer), "CPU temp: %d.%dC", t / 10, t % 10 );
         printf("%s\n", text_buffer);
-        ssd1306DrawString(0,  row * 8, text_buffer, 1, WHITE, LAYER0); 
+        ssd1306DrawString(0,  row * 8, text_buffer, 1, WHITE, LAYER0);
         row++;
 
         /* Refresh screen */
