@@ -189,12 +189,16 @@ void  ssd1306Data( uint8_t *data, int size  ) {
         printf("Error! memory not allocated.\n");
         exit(0);
     }
-    *ptr = 0x40;                               // first send "Control byte"
-    memcpy( ptr + 1, data, size ); 
-    ssd1306Command(SSD1306_SETLOWCOLUMN  | 0x0 );
-    ssd1306Command(SSD1306_SETHIGHCOLUMN | 0x0 );
-    ssd1306Command(SSD1306_SETSTARTLINE  | 0x0 );
-    i2c_write((uint8_t)SSD1306_ADDRESS, (uint8_t *)ptr, (size + 1));
+    memcpy( ptr + 1, data, size);
+    for(int i = 0; i < size; i += 128) {
+        *(ptr + i) = 0x40;                               // first send "Control byte"
+        ssd1306Command(SSD1306_SETLOWCOLUMN  | DISPLAY_LOW_COLUMN);
+        ssd1306Command(SSD1306_SETHIGHCOLUMN | 0x00);
+        ssd1306Command(SSD1306_SETSTARTLINE  | 0x00);
+        //Set Page Address: (B0H - B7H)
+        ssd1306Command(0xB0 | (i / 128));
+        i2c_write((uint8_t)SSD1306_ADDRESS, ptr + i,  128 + 1);
+    }
     free(ptr);
 }
 

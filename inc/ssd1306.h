@@ -43,6 +43,8 @@ extern "C" {
 #define     SSD1306_LCDWIDTH            128
 #define     SSD1306_LCDHEIGHT          	64
 
+//If the SH1106 display is used then the start column is possible 0x02
+#define     DISPLAY_LOW_COLUMN          0x00
 
 #define SSD1306_ADDRESS                 0x3c
 // Commands
