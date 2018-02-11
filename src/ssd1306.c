@@ -130,9 +130,6 @@ void  ssd1306Init(uint8_t vccstate)
  */
 void ssd1306Refresh(void) 
 {
-    ssd1306Command(SSD1306_SETLOWCOLUMN  | 0x0);  // low col = 0
-    ssd1306Command(SSD1306_SETHIGHCOLUMN | 0x0);  // hi col = 0
-    ssd1306Command(SSD1306_SETSTARTLINE  | 0x0);  // line #0
 
     #ifdef MULTILAYER
         ssd1306MixFrameBuffer();
