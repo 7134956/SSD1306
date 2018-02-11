@@ -59,21 +59,21 @@ float GetCPULoad() {
  * 
  * @return 
  */
-float GetMemUsage() {
+int GetMemUsage() {
     int FileHandler;
     char FileBuffer[1024];
-    int memTotal, memFree, memBuf,memCached;
-    float result;
+    int memTotal, memFree, memAvailable, memBuf, memCached;
+
     FileHandler = open("/proc/meminfo", O_RDONLY);
     if(FileHandler < 0) {
         return -1; }
     read(FileHandler, FileBuffer, sizeof(FileBuffer) - 1);
-    sscanf(FileBuffer, "MemTotal:         %d kB\n MemFree:          %d kB\n Buffers:           %d kB\n Cached:           %d kB",
-     &memTotal, &memFree, &memBuf, &memCached);
+    sscanf(FileBuffer, "MemTotal: %d kB\n MemFree: %d kB\nMemAvailable: %d\nBuffers: %d kB\nCached: %i kB\n",
+     &memTotal, &memFree, &memAvailable, &memBuf, &memCached);
     close(FileHandler);
-    result = 1.0 - (float)(memFree + memCached) / memTotal;
-    return result;
+    return 100 - memAvailable * 100 / memTotal;
 }
+
 /**
  * 
  * @return 
@@ -196,14 +196,14 @@ int main(int argc, char** argv) {
         printf("%s\n", text_buffer);
         ssd1306DrawString(0,  row * 8, text_buffer, 1, WHITE, LAYER0); 
         row++;
-        
+
         /* Memory usage */
-        float m = GetMemUsage();
-        snprintf ( text_buffer, sizeof(text_buffer), "Mem used: %3.0f%%", m*100 );
+        int m = GetMemUsage();
+        snprintf ( text_buffer, sizeof(text_buffer), "Mem used: %d%%", m );
         printf("%s\n", text_buffer);
-        ssd1306DrawString(4,  2, text_buffer, 1, WHITE, LAYER0); 
+        ssd1306DrawString(4,  2, text_buffer, 1, WHITE, LAYER0);
         ssd1306DrawRect(0, 0, 127, 13, INVERSE, LAYER0);
-        ssd1306FillRect(2, 2, (int)(123 * m), 9, INVERSE, LAYER0);
+        ssd1306FillRect(2, 2, 123 * m / 100, 9, INVERSE, LAYER0);
 
         /* CPU temperature  */
         int t = GetCPUTemp() / 100 ;
